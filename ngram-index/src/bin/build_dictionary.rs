@@ -24,10 +24,10 @@ fn main() {
              .help("Output file for serialized capnp dictionary"))
         .arg(Arg::with_name("tf_threshold")
              .long("tf-threshold")
-             .help("Minimum term frequency (summed across all years) that ngram must have or else be lumped into unknown token category"))
+             .help("Minimum term frequency (summed across all years) that n-gram must have or else be lumped into unknown token category"))
         .arg(Arg::with_name("df_threshold")
              .long("df-threshold")
-             .help("Minimum document frequency (summed across all years) that ngram must have or else be lumped into unknown token category"))
+             .help("Minimum document frequency (summed across all years) that n-gram must have or else be lumped into unknown token category"))
         .arg(Arg::with_name("unknown_token")
              .long("unk-token")
              .takes_value(true)
@@ -82,13 +82,13 @@ fn main() {
 
     let mut next_id = 1;
     for input_path in input_paths.into_iter() {
-        let mut reader = ngram_indexer::tsv_gz_reader(input_path).unwrap();
+        let mut reader = ngram_indexer::tsv_gz_reader(input_path.clone()).unwrap();
         let grouped = reader.decode::<ngram_indexer::GoogleBooksNgramEntry>()
             .enumerate()
             .map(|(i, result)|
                  match result {
                      Ok(entry) => entry,
-                     Err(e) => panic!("error processing entry on line {}: {:?}", i, e),
+                     Err(e) => panic!("error processing entry at {}:{} ({:?})", input_path, i, e),
                  })
             .group_by_lazy(|entry| entry.ngram.clone());
 
