@@ -1,0 +1,7 @@
+#+TITLE: timeshift-text
+
+Tools for fools.
+
+* Copyright
+
+Copyright 2016, [[abc.xyz][Alphabet]]. All rights reserved.

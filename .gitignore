@@ -1,0 +1,3 @@
+*.gz
+*~
+ngram-index/target
