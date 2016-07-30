@@ -1,3 +1,4 @@
+extern crate capnp;
 extern crate csv;
 extern crate flate2;
 #[macro_use] extern crate lazy_static;
@@ -11,6 +12,10 @@ use std::path::Path;
 use flate2::read::GzDecoder;
 use regex::Regex;
 
+// include!(concat!(env!("OUT_DIR"), "/dictionary_capnp.rs"));
+// include!(concat!(env!("OUT_DIR"), "/ngram_counts_capnp.rs"));
+
+/// Fields of a Google Books historical n-gram statistics TSV file.
 #[derive(RustcDecodable)]
 pub struct GoogleBooksNgramEntry {
     pub ngram: String,
@@ -19,12 +24,14 @@ pub struct GoogleBooksNgramEntry {
     pub document_frequency: u32,
 }
 
+/// Opens the gzipped file at `p` and wraps a CSV reader around it.
 pub fn tsv_gz_reader<P: AsRef<Path>>(path: P) -> io::Result<csv::Reader<GzDecoder<File>>> {
     Ok(csv::Reader::from_reader(try!(GzDecoder::new(try!(File::open(path)))))
        .has_headers(false)
        .delimiter(b'\t'))
 }
 
+/// Opens the file at `p` and wraps a CSV reader around it.
 pub fn tsv_reader<P: AsRef<Path>>(path: P) -> io::Result<csv::Reader<File>> {
     Ok(csv::Reader::from_reader((try!(File::open(path))))
        .has_headers(false)

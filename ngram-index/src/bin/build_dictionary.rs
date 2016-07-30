@@ -9,9 +9,10 @@ use std::path;
 
 use clap::{App, Arg};
 use itertools::Itertools;
+// use ngram_indexer::ngram::dictionary;
 
 fn main() {
-    let matches =
+    let arg_matches =
         App::new("build_dictionary")
         .version("0.1.0")
         .about("Builds a dictionary of n-grams from Google Books TSV data")
@@ -42,20 +43,20 @@ fn main() {
         .get_matches();
 
     let tf_threshold =
-        match matches.value_of("tf_threshold").unwrap_or("100").parse::<u32>() {
+        match arg_matches.value_of("tf_threshold").unwrap_or("100").parse::<u32>() {
             Ok(x) => x,
             Err(e) => panic!("Bad term frequency threshold: {}", e),
         };
     let df_threshold =
-        match matches.value_of("df_threshold").unwrap_or("50").parse::<u32>() {
+        match arg_matches.value_of("df_threshold").unwrap_or("50").parse::<u32>() {
             Ok(x) => x,
             Err(e) => panic!("Bad document frequency threshold: {}", e),
         };
-    let drop_token_pos = matches.occurrences_of("drop_token_pos") > 0;
+    let drop_token_pos = arg_matches.occurrences_of("drop_token_pos") > 0;
 
     // TODO(dstu): make sure we can write to output file before doing all the
     // heavy lifting.
-    let output_file = matches.value_of("out")
+    let output_file = arg_matches.value_of("out")
         .map(|s| {
              let p = path::Path::new(s);
              if p.is_dir() {
@@ -66,12 +67,14 @@ fn main() {
         }).unwrap();
 
     let input_paths: Vec<String> =
-        matches.values_of("input").unwrap().map(|x| x.to_string()).collect();
+        arg_matches.values_of("input").unwrap().map(|x| x.to_string()).collect();
 
-    // let mut dictionary = ngram_indexer::schema::Dictionary::new();
+    // let mut message = capnp::message::Builder::new_default();
+    // let mut dictionary = message.init_root::<ngram_indexer::Dictionary::Builder>();
+    // let mut token_entries = dictionary.init_entries(256);
     // {
-    //     let unknown_token = matches.value_of("unknown_token").unwrap_or("*UNK*");
-    //     let mut unk_token_entry = ngram_indexer::schema::TokenId::new();
+    //     let unknown_token = arg_matches.value_of("unknown_token").unwrap_or("*UNK*");
+    //     let mut unk_token_entry = ngram_indexer::TokenId::
     //     unk_token_entry.raw_text = unknown_token.clone();
     //     unk_token_entry.id = 0;
     //     dictionary.tokens.push(unk_token_entry);
