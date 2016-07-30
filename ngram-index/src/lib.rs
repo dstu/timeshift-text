@@ -10,16 +10,20 @@ use flate2::read::GzDecoder;
 
 #[derive(RustcDecodable)]
 pub struct GoogleBooksNgramEntry {
-    ngram: String,
-    year: u16,
-    term_frequency: u32,
-    document_frequency: u32,
+    pub ngram: String,
+    pub year: u16,
+    pub term_frequency: u32,
+    pub document_frequency: u32,
 }
 
 pub fn tsv_gz_reader<P: AsRef<Path>>(path: P) -> io::Result<csv::Reader<GzDecoder<File>>> {
-    Ok(csv::Reader::from_reader(try!(GzDecoder::new(try!(File::open(path))))))
+    Ok(csv::Reader::from_reader(try!(GzDecoder::new(try!(File::open(path)))))
+       .has_headers(false)
+       .delimiter(b'\t'))
 }
 
 pub fn tsv_reader<P: AsRef<Path>>(path: P) -> io::Result<csv::Reader<File>> {
-    Ok(csv::Reader::from_reader(try!(GzDecoder::new(try!(File::open(path))))))
+    Ok(csv::Reader::from_reader((try!(File::open(path))))
+       .has_headers(false)
+       .delimiter(b'\t'))
 }
